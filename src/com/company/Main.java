@@ -1,8 +1,8 @@
 package com.company;
 
+import com.company.Utilities.DateUtilities;
 import com.company.Utilities.FileUtilities;
 import com.company.models.SentianceEvent;
-import com.company.models.StatusEnum;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,22 +25,30 @@ public class Main {
         Map<Date, List<SentianceEvent>> sdkRestartedList = new HashMap<>();
         Map<Date, List<SentianceEvent>> sdkConfirmedStationeryStartEvent = new HashMap<>();
         Map<Date, List<SentianceEvent>> sdkUnconfirmedStationeryStartEvent = new HashMap<>();
+        Map<Calendar, Double> avgRestartsPerDayMap = new HashMap<>();
 
         List<Integer> countPerDir = new ArrayList<>();
         List<SentianceEvent> sentianceEventList = new ArrayList<>();
         try {
-            sdkRestartedList = FileUtilities.showFiles(files, StatusEnum.SDK_START_EVENT.toString());//"SdkStatusManager: SdkStatus startStatus changed to STARTED");
-            sdkConfirmedStationeryStartEvent = FileUtilities.showFiles(files, StatusEnum.STATIONARY_START_EVENT.toString());//"Payload submission success: stationaryEvent|stationary_start");
-            sdkUnconfirmedStationeryStartEvent = FileUtilities.showFiles(files, StatusEnum.UNCONFIRMED_STATIONARY_STATE.toString());//"Payload evaluation unsuccessful: stationaryEvent|stationary_start");
+//            sdkRestartedList = FileUtilities.showFiles(files, StatusEnum.SDK_START_EVENT.toString());//"SdkStatusManager: SdkStatus startStatus changed to STARTED");
+//            sdkConfirmedStationeryStartEvent = FileUtilities.showFiles(files, StatusEnum.STATIONARY_START_EVENT.toString());//"Payload submission success: stationaryEvent|stationary_start");
+//            sdkUnconfirmedStationeryStartEvent = FileUtilities.showFiles(files, StatusEnum.UNCONFIRMED_STATIONARY_STATE.toString());//"Payload evaluation unsuccessful: stationaryEvent|stationary_start");
+            avgRestartsPerDayMap = FileUtilities.getAvgSdkRestartsPerDay(files);
+
+            for (Map.Entry<Calendar, Double> entry : avgRestartsPerDayMap.entrySet()) {
+                System.out.println(DateUtilities.convertCalendarToString(entry.getKey()) + " ; " + entry.getValue());
+            }
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        printListContent(sdkRestartedList);
-        printListContent(sdkConfirmedStationeryStartEvent);
-        printListContent(sdkUnconfirmedStationeryStartEvent);
+//        printListContent(sdkRestartedList);
+//        printListContent(sdkConfirmedStationeryStartEvent);
+//        printListContent(sdkUnconfirmedStationeryStartEvent);
+
+
 
     }
 
@@ -53,4 +61,6 @@ public class Main {
 
         System.out.println(map.size());
     }
+
+
 }

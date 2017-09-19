@@ -1,16 +1,16 @@
 package com.company.models;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by gershonlehrer on 19/09/2017.
  */
 public class SentianceEvent {
     private String mUserId;
-    private Date mDateOfEvent;
+    private Calendar mDateOfEvent;
     private StatusEnum mEvent;
 
-    public SentianceEvent(String userId, Date dateOfEvent, StatusEnum event) {
+    public SentianceEvent(String userId, Calendar dateOfEvent, StatusEnum event) {
         mUserId = userId;
         mDateOfEvent = dateOfEvent;
         mEvent = event;
@@ -24,11 +24,11 @@ public class SentianceEvent {
         mUserId = userId;
     }
 
-    public Date getDateOfEvent() {
+    public Calendar getDateOfEvent() {
         return mDateOfEvent;
     }
 
-    public void setDateOfEvent(Date dateOfEvent) {
+    public void setDateOfEvent(Calendar dateOfEvent) {
         mDateOfEvent = dateOfEvent;
     }
 
