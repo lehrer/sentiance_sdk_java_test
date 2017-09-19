@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by gershonlehrer on 19/09/2017.
@@ -20,115 +17,39 @@ import java.util.List;
 public class FileUtilities {
     private static String mCurrentUser;
 
-//    public static int showFiles(File[] files, String stringToFind) throws IOException {
-//        int count = 0;
-//        for (File file : files) {
-//            if (file.isDirectory()) {
-//                System.out.println("Directory: " + file.getName());
-//                count += showFiles(file.listFiles(), stringToFind); // Calls same method again.
-//            } else {
-//                System.out.println("File: " + file.getName());
-//
-//                count += countStringOccurencesInFile(file, stringToFind);
-//            }
-//        }
-//        return count;
-//    }
-
-    public static List<SentianceEvent> showFiles(File[] files, String stringToFind) throws IOException {
+    public static Map<Date, List<SentianceEvent>> showFiles(File[] files, String stringToFind) throws IOException {
         return showFiles(files, "", stringToFind);
     }
 
-    public static List<SentianceEvent> showFiles(File[] files, String user, String stringToFind) throws IOException {
+    public static Map<Date, List<SentianceEvent>> showFiles(File[] files, String user, String stringToFind) throws IOException {
         List<SentianceEvent> sentianceEventList = new ArrayList<>();
+        Map<Date, List<SentianceEvent>> listMap = new HashMap<>();
         for (File file : files) {
             if (file.isDirectory()) {
                 System.out.println("Directory: " + file.getName());
-                mCurrentUser = file.getName();
-                sentianceEventList.addAll(showFiles(file.listFiles(), mCurrentUser, stringToFind)); // Calls same method again.
+                if (file.getName().startsWith("user"))
+                    mCurrentUser = file.getName();
+                for (Map.Entry<Date, List<SentianceEvent>> e : showFiles(file.listFiles(), mCurrentUser, stringToFind).entrySet()) {
+                    if (!listMap.containsKey(e.getKey()))
+                        listMap.put(e.getKey(), e.getValue());
+                }
             } else {
                 System.out.println("File: " + file.getName());
-                sentianceEventList.addAll(getMatchingEventsAsList(file, mCurrentUser, stringToFind));
+//                sentianceEventList.addAll(getMatchingEventsAsList(file, mCurrentUser, stringToFind));
+                for (Map.Entry<Date, List<SentianceEvent>> e : getMatchingEventsAsList(file, mCurrentUser, stringToFind).entrySet()) {
+                    if (!listMap.containsKey(e.getKey()))
+                        listMap.put(e.getKey(), e.getValue());
+                }
             }
         }
-        return sentianceEventList;
+        return listMap;
     }
 
-//    public static List<SentianceEvent> countFilesDirectory(File[] files, String stringToFind) throws IOException {
-//        List<Integer> integerList = new ArrayList<>();
-//        List<SentianceEvent> sentianceEventList = new ArrayList<>();
-//        String currentUser="";
-//        for (File file : files) {
-//            if (file.isDirectory()) {
-//                System.out.println("Directory: " + file.getName());
-//                if (file.getName().toLowerCase().startsWith("user")){
-//                    currentUser=file.getName().toLowerCase();
-//                }
-//                integerList.add(showFiles(file.listFiles(), stringToFind));
-//            } else {
-//                System.out.println("File: " + file.getName());
-//                if (integerList.size() > 0) {
-//                    int position = integerList.size() - 1;
-//                    int currentValue = integerList.get(position);
-//                    integerList.set(position, currentValue + countStringOccurencesInFile(file, stringToFind));
-//                } else {
-//                    sentianceEventList.addAll(getMatchingEventsAsList(file, currentUser,stringToFind));
-//                }
-//            }
-//        }
-//        return sentianceEventList;
-//    }
 
-//    public static List<SentianceEvent> countFilesDirectory(File[] files,String user, String stringToFind) throws IOException {
-//        List<SentianceEvent> sentianceEventList = new ArrayList<>();
-//        String currentUser="";
-//        for (File file : files) {
-//            if (file.isDirectory()) {
-//                System.out.println("Directory: " + file.getName());
-//                if (file.getName().toLowerCase().startsWith("user")){
-//                    currentUser=file.getName().toLowerCase();
-//                }
-//                integerList.add(showFiles(file.listFiles(), stringToFind));
-//            } else {
-//                System.out.println("File: " + file.getName());
-//
-//                if (integerList.size() > 0) {
-//                    int position = integerList.size() - 1;
-//                    int currentValue = integerList.get(position);
-//                    integerList.set(position, currentValue + getMatchingEventsAsList(file,user, stringToFind));
-//                } else {
-//                    integerList.add(getMatchingEventsAsList(file, user,stringToFind));
-//                }
-//            }
-//        }
-//        return sentianceEventList;
-//    }
-
-    public static int countStringOccurencesInFile(File file, String stringToFind) throws IOException {
-        int count = 0;
-        //use as  HashMap<useridString, HashMap<eventDate, eventString>>
-        HashMap<String, HashMap<Date, String>> stringHashMapHashMap = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-//                sb.append(line);
-//                sb.append(System.lineSeparator());
-                if (line.toLowerCase().contains(stringToFind.toLowerCase()))
-                    count++;
-                Date date = convertStringToDate(line.substring(0, 23));
-                line = br.readLine();
-
-            }
-//            String everything = sb.toString();
-        }
-        return count;
-    }
-
-    public static List<SentianceEvent> getMatchingEventsAsList(File file, String userID, String stringToFind) throws IOException {
+    public static Map<Date, List<SentianceEvent>> getMatchingEventsAsList(File file, String userID, String stringToFind) throws IOException {
         int count = 0;
         List<SentianceEvent> sentianceEventList = new ArrayList<>();
+        Map<Date, List<SentianceEvent>> listMap = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
@@ -137,14 +58,16 @@ public class FileUtilities {
                 if (line.toLowerCase().contains(stringToFind.toLowerCase())) {
                     Date date = convertStringToDate(line.substring(0, 23));
                     SentianceEvent sentianceEvent = new SentianceEvent(userID, date, stringToFind);
+                    sentianceEventList = listMap.getOrDefault(sentianceEvent.getDateOfEvent(), new ArrayList<SentianceEvent>());
                     sentianceEventList.add(sentianceEvent);
+                    listMap.put(sentianceEvent.getDateOfEvent(), sentianceEventList);
                 }
                 count++;
                 line = br.readLine();
 
             }
         }
-        return sentianceEventList;
+        return listMap;
     }
 
     public static Date convertStringToDate(String date) {
