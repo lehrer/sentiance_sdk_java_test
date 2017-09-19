@@ -2,6 +2,7 @@ package com.company;
 
 import com.company.Utilities.FileUtilities;
 import com.company.models.SentianceEvent;
+import com.company.models.StatusEnum;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,9 +29,9 @@ public class Main {
         List<Integer> countPerDir = new ArrayList<>();
         List<SentianceEvent> sentianceEventList = new ArrayList<>();
         try {
-            sdkRestartedList = FileUtilities.showFiles(files, "SdkStatusManager: SdkStatus startStatus changed to STARTED");
-            sdkConfirmedStationeryStartEvent = FileUtilities.showFiles(files, "Payload submission success: stationaryEvent|stationary_start");
-            sdkUnconfirmedStationeryStartEvent = FileUtilities.showFiles(files, "Payload evaluation unsuccessful: stationaryEvent|stationary_start");
+            sdkRestartedList = FileUtilities.showFiles(files, StatusEnum.SDK_START_EVENT.toString());//"SdkStatusManager: SdkStatus startStatus changed to STARTED");
+            sdkConfirmedStationeryStartEvent = FileUtilities.showFiles(files, StatusEnum.STATIONARY_START_EVENT.toString());//"Payload submission success: stationaryEvent|stationary_start");
+            sdkUnconfirmedStationeryStartEvent = FileUtilities.showFiles(files, StatusEnum.UNCONFIRMED_STATIONARY_STATE.toString());//"Payload evaluation unsuccessful: stationaryEvent|stationary_start");
 
 
         } catch (IOException e) {

@@ -1,6 +1,7 @@
 package com.company.Utilities;
 
 import com.company.models.SentianceEvent;
+import com.company.models.StatusEnum;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,7 +58,7 @@ public class FileUtilities {
             while (line != null) {
                 if (line.toLowerCase().contains(stringToFind.toLowerCase())) {
                     Date date = convertStringToDate(line.substring(0, 23));
-                    SentianceEvent sentianceEvent = new SentianceEvent(userID, date, stringToFind);
+                    SentianceEvent sentianceEvent = new SentianceEvent(userID, date, StatusEnum.of(stringToFind));
                     sentianceEventList = listMap.getOrDefault(sentianceEvent.getDateOfEvent(), new ArrayList<SentianceEvent>());
                     sentianceEventList.add(sentianceEvent);
                     listMap.put(sentianceEvent.getDateOfEvent(), sentianceEventList);
@@ -71,7 +72,7 @@ public class FileUtilities {
     }
 
     public static Date convertStringToDate(String date) {
-        String inputString = "2017-06-23T22:57:47.846";
+//        String inputString = "2017-06-23T22:57:47.846";
         Date inputDate = null;
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         try {
@@ -80,5 +81,9 @@ public class FileUtilities {
             e.printStackTrace();
         }
         return inputDate;
+    }
+
+    public static double getAverageSdkRestartsPerDay() {
+        return 0.0;
     }
 }

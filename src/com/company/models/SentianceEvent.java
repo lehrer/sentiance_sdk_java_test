@@ -8,9 +8,9 @@ import java.util.Date;
 public class SentianceEvent {
     private String mUserId;
     private Date mDateOfEvent;
-    private String mEvent;
+    private StatusEnum mEvent;
 
-    public SentianceEvent(String userId, Date dateOfEvent, String event) {
+    public SentianceEvent(String userId, Date dateOfEvent, StatusEnum event) {
         mUserId = userId;
         mDateOfEvent = dateOfEvent;
         mEvent = event;
@@ -32,11 +32,11 @@ public class SentianceEvent {
         mDateOfEvent = dateOfEvent;
     }
 
-    public String getEvent() {
+    public StatusEnum getEvent() {
         return mEvent;
     }
 
-    public void setEvent(String event) {
+    public void setEvent(StatusEnum event) {
         mEvent = event;
     }
 
@@ -49,7 +49,7 @@ public class SentianceEvent {
 
         if (mUserId != null ? !mUserId.equals(that.mUserId) : that.mUserId != null) return false;
         if (mDateOfEvent != null ? !mDateOfEvent.equals(that.mDateOfEvent) : that.mDateOfEvent != null) return false;
-        return mEvent != null ? mEvent.equals(that.mEvent) : that.mEvent == null;
+        return mEvent == that.mEvent;
     }
 
     @Override
